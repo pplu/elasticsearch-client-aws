@@ -21,7 +21,10 @@ my $Cxn_Error = qr/ Connection.(?:timed.out|re(?:set|fused))
                        /x;
 
 has region => (is => 'ro', required => 1);
-#has credentials => (is => 'ro', required => 1);
+has credentials => (is => 'ro', required => 1, isa => sub { 
+  die "Credentials needs to have an access_key method" if (not $_[0]->can('access_key'));
+  die "Credentials needs to have an secret_key method" if (not $_[0]->can('secret_key'));
+});
 
 #===================================
 sub perform_request {
@@ -39,7 +42,12 @@ sub perform_request {
     $args{headers}{Date} = strftime( '%Y%m%dT%H%M%SZ', gmtime );
     $args{headers}{Host} = $uri->host;
 
-    my $sig = Net::Amazon::Signature::V4->new( $ENV{ACCESS_KEY}, $ENV{SECRET_KEY}, $self->region, 'es' );
+    my $sig = Net::Amazon::Signature::V4->new(
+      $self->credentials->access_key,
+      $self->credentials->secret_key,
+      $self->region,
+      'es'
+    );
     my $req = HTTP::Request->new(
       $params->{ method },
       $uri,
