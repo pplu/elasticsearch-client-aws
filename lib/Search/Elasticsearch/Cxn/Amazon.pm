@@ -5,6 +5,11 @@ with 'Search::Elasticsearch::Role::Cxn::HTTP',
     'Search::Elasticsearch::Role::Cxn',
     'Search::Elasticsearch::Role::Is_Sync';
 
+use Net::Amazon::Signature::V4;
+use HTTP::Request;
+use HTTP::Headers;
+use POSIX qw(strftime);
+
 use HTTP::Tiny 0.043 ();
 use namespace::clean;
 
@@ -14,6 +19,9 @@ my $Cxn_Error = qr/ Connection.(?:timed.out|re(?:set|fused))
                        | No.route.to.host
                        | temporarily.unavailable
                        /x;
+
+has region => (is => 'ro', required => 1);
+#has credentials => (is => 'ro', required => 1);
 
 #===================================
 sub perform_request {
@@ -27,6 +35,21 @@ sub perform_request {
         $args{content} = $params->{data};
         $args{headers}{'Content-Type'} = $params->{mime_type};
     }
+
+    $args{headers}{Date} = strftime( '%Y%m%dT%H%M%SZ', gmtime );
+    $args{headers}{Host} = $uri->host;
+
+    my $sig = Net::Amazon::Signature::V4->new( $ENV{ACCESS_KEY}, $ENV{SECRET_KEY}, $self->region, 'es' );
+    my $req = HTTP::Request->new(
+      $params->{ method },
+      $uri,
+      HTTP::Headers->new(%{ $args{headers} }),
+      $args{content}
+    );
+    $sig->sign($req);
+
+    $args{headers}{Authorization} = $req->header('Authorization');
+    delete $args{headers}{Host};
 
     my $handle = $self->handle;
     $handle->timeout( $params->{timeout} || $self->request_timeout );
