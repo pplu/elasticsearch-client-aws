@@ -1,4 +1,7 @@
 package Search::Elasticsearch::Cxn::Amazon;
+# This is basically Search::Elasticsearch::Cxn::HTTPTiny with
+# AWS signing in it.
+
 $Search::Elasticsearch::Cxn::Amazon::VERSION = '2.03';
 use Moo;
 with 'Search::Elasticsearch::Role::Cxn::HTTP',
