@@ -24,15 +24,14 @@ my $c = Search::Elasticsearch->new(
   credentials => ESCreds->new,
 );
 
-my $results = $c->search(
-  index => 'my_index',
-  type => 'type',
-  body => {
-    query => { 
-      match => { my => 'document' }
-    }
-  }
-);
-print Dumper($results);
-
+foreach my $i (1..100) {
+  $c->create(
+    index => 'my_index',
+    type  => 'type',
+    id    => "$i",
+    body  => { my => "document $i",
+               number => $i
+             }
+   );
+}
 
