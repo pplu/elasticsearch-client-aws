@@ -42,12 +42,17 @@ sub perform_request {
     $args{headers}{Date} = strftime( '%Y%m%dT%H%M%SZ', gmtime );
     $args{headers}{Host} = $uri->host;
 
+    if ($self->credentials->session_token) {
+      $args{headers}{'X-Amz-Security-Token'} = $self->credentials->session_token;
+    }
+
     my $sig = Net::Amazon::Signature::V4->new(
       $self->credentials->access_key,
       $self->credentials->secret_key,
       $self->region,
       'es'
     );
+
     my $req = HTTP::Request->new(
       $params->{ method },
       $uri,
