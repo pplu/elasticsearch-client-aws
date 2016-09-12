@@ -4,22 +4,21 @@ use Search::Elasticsearch;
 use Data::Dumper;
 use FindBin;
 
-package ESCreds {
-  use Moo;
-  has access_key => (is => 'ro', required => 1, default => sub { $ENV{ ACCESS_KEY } });
-  has secret_key => (is => 'ro', required => 1, default => sub { $ENV{ SECRET_KEY } });
-}
-
 my $host = $ARGV[0] or die "Usage: $0 HOST";
 
 use lib "$FindBin::Bin/../lib";
+
+use Search::Elasticsearch::Cxn::AmazonES::Credentials;
 
 my $c = Search::Elasticsearch->new(
   cxn_pool => 'Static',
   nodes => [ $host ],
   cxn => 'AmazonES',
   region => 'eu-west-1',
-  credentials => ESCreds->new,
+  credentials => Search::Elasticsearch::Cxn::AmazonES::Credentials->new(
+    access_key => $ENV{ ACCESS_KEY },
+    secret_key => $ENV{ SECRET_KEY },
+  ),
 );
 
 my $results = $c->search(
