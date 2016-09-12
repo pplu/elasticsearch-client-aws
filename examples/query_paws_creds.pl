@@ -12,11 +12,9 @@ use lib "$FindBin::Bin/../lib";
 my $paws = Paws->new;
 
 my $c = Search::Elasticsearch->new(
-  #cxn_pool => 'Static::NoPing',
-  #cxn_pool => 'Sniff',
   cxn_pool => 'Static',
   nodes => [ $host ],
-  cxn => 'Amazon',
+  cxn => 'AmazonES',
   region => 'eu-west-1',
   credentials => $paws->config->credentials,
 );

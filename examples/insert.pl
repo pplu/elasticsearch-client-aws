@@ -19,7 +19,7 @@ my $c = Search::Elasticsearch->new(
   #cxn_pool => 'Sniff',
   cxn_pool => 'Static',
   nodes => [ $host ],
-  cxn => 'Amazon',
+  cxn => 'AmazonES',
   region => 'eu-west-1',
   credentials => ESCreds->new,
 );

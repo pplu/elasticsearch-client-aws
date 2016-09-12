@@ -20,7 +20,7 @@ my $paws = Paws->new( config => {
 my $c = Search::Elasticsearch->new(
   cxn_pool => 'Static',
   nodes => [ $host ],
-  cxn => 'Amazon',
+  cxn => 'AmazonES',
   region => 'eu-west-1',
   credentials => $paws->config->credentials,
 );

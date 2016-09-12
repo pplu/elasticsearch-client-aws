@@ -15,11 +15,9 @@ my $host = $ARGV[0] or die "Usage: $0 HOST";
 use lib "$FindBin::Bin/../lib";
 
 my $c = Search::Elasticsearch->new(
-  #cxn_pool => 'Static::NoPing',
-  #cxn_pool => 'Sniff',
   cxn_pool => 'Static',
   nodes => [ $host ],
-  cxn => 'Amazon',
+  cxn => 'AmazonES',
   region => 'eu-west-1',
   credentials => ESCreds->new,
 );

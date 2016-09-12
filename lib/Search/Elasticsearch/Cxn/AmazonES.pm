@@ -1,4 +1,4 @@
-package Search::Elasticsearch::Cxn::Amazon;
+package Search::Elasticsearch::Cxn::AmazonES;
 # This is basically Search::Elasticsearch::Cxn::HTTPTiny with
 # AWS signing in it.
 
