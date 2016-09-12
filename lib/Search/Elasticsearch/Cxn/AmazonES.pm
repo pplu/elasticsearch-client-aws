@@ -27,6 +27,7 @@ has region => (is => 'ro', required => 1);
 has credentials => (is => 'ro', required => 1, isa => sub { 
   die "Credentials needs to have an access_key method" if (not $_[0]->can('access_key'));
   die "Credentials needs to have an secret_key method" if (not $_[0]->can('secret_key'));
+  die "Credentials needs to have a session_token method" if (not $_[0]->can('session_token'));
 });
 
 #===================================
@@ -109,3 +110,101 @@ sub _build_handle {
 }
 
 1;
+
+__END__
+
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+Search::Elasticsearch::Cxn::AmazonES - A Cxn implementation to connect to Amazon ES clusters
+
+=head1 VERSION
+
+version 0.01
+
+=head1 DESCRIPTION
+
+Provides a Cxn class that is able to connect to Elasticsearch clusters provisioned by the
+Amazon Web Services Elasticsearch (ES) service. It uses L<HTTP::Tiny> to perform the requests,
+signing them with AWS v4 signatures.
+
+This backend is based on the implmentation of the L<Search::Elasticsearch::Cxn::HTTPTiny> module,
+only adding the ability to sign requests with AWS credentials.
+
+See L<Paws::ES> for information provisioning and modifying Amazon ES clusters via the administrative
+API
+
+=head1 SYNOPSIS
+
+  use Search::ElasticSearch;
+
+  my $c = Search::Elasticsearch->new(
+    nodes  => [ 'es_endpoint' ],
+    cxn    => 'AmazonES',
+    region => 'eu-west-1',
+    credentials => $creds
+  );
+
+=head1 CONFIGURATION
+
+=head2 C<region>
+
+Region where the ES cluster is provisioned
+
+=head2 C<credentials>
+
+Any object that has methods C<access_key>, C<secret_key> and C<session_token>.
+
+session_token must return undef if there is no session token.
+
+With this distribution, you can find L<Search::Elasticsearch::Cxn::AmazonES::Credentials>,
+which will help you instance an object with those methods, but you can really pass in any
+object you want. One that may be interesting are L<Paws> credential objects. The same objects
+that Paws uses to authenticate can be used with L<Search::Elasticsearch>. See the examples
+directory for code that uses this capability to integrate with Paws.
+
+  my $paws = Paws->new;
+  my $c = Search::Elasticsearch->new(
+    ...
+    credentials => $paws->config->credentials,
+    ...
+  );
+
+=head2 Inherited configuration
+
+See L<Search::Elasticsearch::Cxn::HTTPTiny> for inherited configurations
+
+=head1 SSL/TLS
+
+See L<Search::Elasticsearch::Cxn::HTTPTiny> for SSL information
+
+=head1 SEE ALSO
+
+=over
+
+=item * L<Search::Elasticsearch::Cxn::HTTPTiny>
+
+=item * L<Search::Elasticsearch>
+
+=back
+
+=head1 AUTHOR
+
+Original HTTP Cxn code by Clinton Gormley <drtech@cpan.org>
+
+Adapted to AmazonES by Jose Luis Martinez Torres <joseluis.martinez@capside.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is Copyright (c) 2016 by CAPSiDE
+
+Original code by Elasticsearch BV.
+
+=head1 LICENSE
+
+  Apache 2.0 License
+
+=cut
