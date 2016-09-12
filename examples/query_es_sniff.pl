@@ -1,5 +1,7 @@
 #!/usr/bin/env perl
 
+warn "Watch out!!! Sniff cxn_pool doesn't work with AmazonES";
+
 use Search::Elasticsearch;
 use Data::Dumper;
 use FindBin;
@@ -13,14 +15,13 @@ use lib "$FindBin::Bin/../lib";
 my $paws = Paws->new( config => {
   credentials => Paws::Credential::STS->new(
     Name => 'es-test-sts',
-    Policy => '{"Version": "2012-10-17","Statement": {"Effect": "Allow","Action": "es:*", "Resource": "*" } }',
-    # Use this restricted policy to make the client fail to connect to the cluster
-    #Policy => '{"Version": "2012-10-17","Statement": {"Effect": "Allow","Action": "sqs:*", "Resource": "*" } }',
+    Policy => '{"Version": "2012-10-17","Statement": {"Effect": "Allow","Action": "*", "Resource": "*" } }',
   ),
 });
 
 my $c = Search::Elasticsearch->new(
-  cxn_pool => 'Static',
+  trace_to => 'Stderr',
+  cxn_pool => 'Sniff',
   nodes => [ $host ],
   cxn => 'AmazonES',
   region => 'eu-west-1',
