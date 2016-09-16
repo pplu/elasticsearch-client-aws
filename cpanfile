@@ -1,6 +1,10 @@
 requires 'Search::Elasticsearch';
 requires 'Net::Amazon::Signature::V4';
 
+on test => sub {
+  requires 'Test::More';
+};
+
 on develop => sub {
   requires 'Carp::Always';
   requires 'Dist::Zilla';
