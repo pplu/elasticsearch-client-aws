@@ -1,2 +1,4 @@
 0.01
  - First version derived from Search::Elasticsearch::Cxn::HTTPTiny
+0.02
+ - Make AWS signer pluggable

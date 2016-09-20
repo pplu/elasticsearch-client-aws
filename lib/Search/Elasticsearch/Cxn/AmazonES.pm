@@ -2,7 +2,7 @@ package Search::Elasticsearch::Cxn::AmazonES;
 # This is basically Search::Elasticsearch::Cxn::HTTPTiny with
 # AWS signing in it.
 
-$Search::Elasticsearch::Cxn::AmazonES::VERSION = '0.01';
+$Search::Elasticsearch::Cxn::AmazonES::VERSION = '0.02';
 use Moo;
 with 'Search::Elasticsearch::Role::Cxn::HTTP',
     'Search::Elasticsearch::Role::Cxn',
