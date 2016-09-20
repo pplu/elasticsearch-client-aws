@@ -23,6 +23,7 @@ my $Cxn_Error = qr/ Connection.(?:timed.out|re(?:set|fused))
                        | temporarily.unavailable
                        /x;
 
+has aws_sign_class => (is => 'ro', default => 'Net::Amazon::Signature::V4');
 has region => (is => 'ro', required => 1);
 has credentials => (is => 'ro', required => 1, isa => sub { 
   die "Credentials needs to have an access_key method" if (not $_[0]->can('access_key'));
@@ -50,7 +51,7 @@ sub perform_request {
       $args{headers}{'X-Amz-Security-Token'} = $self->credentials->session_token;
     }
 
-    my $sig = Net::Amazon::Signature::V4->new(
+    my $sig = $self->aws_sign_class->new(
       $self->credentials->access_key,
       $self->credentials->secret_key,
       $self->region,
